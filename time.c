@@ -583,11 +583,16 @@ static int hijack_undefined_symbol_references(struct dl_phdr_info *info, size_t 
 	pr_debug("Inspecting the entries in the Dynamic Segment...\n");
 	dyn_entry = (ElfW(Dyn) *)dynamic_seg_addr;
 	while (1) {
-		if (dyn_entry->d_tag == DT_JMPREL)
+		if (dyn_entry->d_tag == DT_JMPREL) {
 			/* Get the address of the PLT relocations. */
-			//jmprel_addr = info->dlpi_addr + dyn_entry->d_un.d_ptr;
 			jmprel_addr = dyn_entry->d_un.d_ptr;
-		else if (dyn_entry->d_tag == DT_PLTRELSZ)
+			if (jmprel_addr < info->dlpi_addr)
+				/*
+				 * Make the address absolute (necessary
+				 * for musl dynamic linker).
+				 */
+				jmprel_addr += info->dlpi_addr;
+		} else if (dyn_entry->d_tag == DT_PLTRELSZ)
 			/* Get the total size of the PLT relocations. */
 			jmprel_size = dyn_entry->d_un.d_val;
 		else if (dyn_entry->d_tag == DT_PLTREL)
@@ -597,13 +602,17 @@ static int hijack_undefined_symbol_references(struct dl_phdr_info *info, size_t 
 			dyn_entry->d_tag == DT_RELAENT)
 			/* Get the size in bytes of each relocation entry. */
 			jmprel_entry_size = dyn_entry->d_un.d_val;
-		else if (dyn_entry->d_tag == DT_SYMTAB)
+		else if (dyn_entry->d_tag == DT_SYMTAB) {
 			/* Get the address of the dynamic symbol table. */
 			symtab_addr = dyn_entry->d_un.d_ptr;
-		else if (dyn_entry->d_tag == DT_STRTAB)
+			if (symtab_addr < info->dlpi_addr)
+				symtab_addr += info->dlpi_addr;
+		} else if (dyn_entry->d_tag == DT_STRTAB) {
 			/* Get the address of the string table. */
 			strtab_addr = dyn_entry->d_un.d_ptr;
-		else if (dyn_entry->d_tag == DT_FLAGS)
+			if (strtab_addr < info->dlpi_addr)
+			strtab_addr += info->dlpi_addr;
+		} else if (dyn_entry->d_tag == DT_FLAGS)
 			/* Get the flags. */
 			dyn_flags = dyn_entry->d_un.d_val;
 		else if (dyn_entry->d_tag == DT_FLAGS_1)
