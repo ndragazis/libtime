@@ -52,7 +52,7 @@ the specified symbol.
 
 Here is an example:
 ```
-$ LD_BIND_NOW=1 SYMBOL=memcpy LD_PRELOAD=./libtime.so ls /home
+$ SYMBOL=memcpy LD_PRELOAD=./libtime.so ls /home
 Waited for memcpy for 121 nsec
 Waited for memcpy for 83 nsec
 Waited for memcpy for 161 nsec

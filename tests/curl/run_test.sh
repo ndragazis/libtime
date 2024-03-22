@@ -9,8 +9,8 @@ trap 'rm -f ${FILE?}' EXIT
 
 # Measure latencies of `read()` calls
 echo "Measuring latencies of curl's \`recv()\` function calls..."
-LD_BIND_NOW=1 SYMBOL=recv LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} curl -v --progress-bar --no-keepalive --max-time 10 -o /dev/null http://ipv4.download.thinkbroadband.com/1GB.zip 2> /dev/null
-#LD_BIND_NOW=1 SYMBOL=fwrite LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} curl -v --progress-bar --no-keepalive --max-time 10 -o /dev/null http://ipv4.download.thinkbroadband.com/1GB.zip 2> /dev/null
+SYMBOL=recv LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} curl -v --progress-bar --no-keepalive --max-time 10 -o /dev/null http://ipv4.download.thinkbroadband.com/1GB.zip 2> /dev/null
+#SYMBOL=fwrite LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} curl -v --progress-bar --no-keepalive --max-time 10 -o /dev/null http://ipv4.download.thinkbroadband.com/1GB.zip 2> /dev/null
 
 # Calculate latency statistics
 echo "Calculating latency statistics..."

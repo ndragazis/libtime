@@ -9,8 +9,8 @@ trap 'rm -f ${FILE?}' EXIT
 
 # Measure latencies of `read()` calls
 echo "Measuring latencies of dd's \`read()\` function calls..."
-LD_BIND_NOW=1 SYMBOL=write LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} dd if=/dev/urandom of=/dev/null bs=1MiB count=512 2>/dev/null
-#LD_BIND_NOW=1 SYMBOL=read LD_PRELOAD=${LIB_PATH?} OUTPUT=/tmp/foo dd if=/dev/urandom of=/dev/null bs=1MiB count=512
+SYMBOL=write LD_PRELOAD=${LIB_PATH?} OUTPUT=${FILE?} dd if=/dev/urandom of=/dev/null bs=1MiB count=512 2>/dev/null
+#SYMBOL=read LD_PRELOAD=${LIB_PATH?} OUTPUT=/tmp/foo dd if=/dev/urandom of=/dev/null bs=1MiB count=512
 
 # Calculate latency statistics
 echo "Calculating latency statistics..."
