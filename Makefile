@@ -1,15 +1,19 @@
-all: libtime.so
+CC := gcc
+CFLAGS := -g -Wall -fPIC
+LDFLAGS := -shared -Wl,--version-script=./libtime.map
+SOURCES := $(wildcard *.c)
+OBJS := $(SOURCES:%.c=%.o)
+TARGET := libtime.so
 
-time.o: time.c
-	@gcc -g -Wall -fPIC -c time.c -o time.o
+all: $(TARGET)
 
-logging.o: logging.c
-	@gcc -g -Wall -fPIC -c logging.c -o logging.o
+%.o: %.c
+	@$(CC) -c $(CFLAGS) $< -o $@
 
-libtime.so: time.o logging.o
-	@gcc -g -Wall -fPIC -shared -Wl,--version-script=./libtime.map time.o logging.o -o libtime.so
+$(TARGET): $(OBJS)
+	@$(CC) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
 clean:
-	@rm -f time.o logging.o libtime.so
+	@rm -f $(OBJS) $(TARGET)
 
 .PHONY: all clean
