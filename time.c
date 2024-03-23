@@ -102,6 +102,7 @@ static void print_latency(void)
 	 */
 	__asm__ volatile
 	(
+	   "mov %rbp, %rsp\n\t"
 	   "popq %rbp\n\t"
 	);
 
